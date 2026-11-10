@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cantinho da Sarah - Painel</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fdf2f4; color: #333; padding: 20px; max-width: 600px; margin: auto; }
+        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(231,84,128,0.1); margin-bottom: 20px; }
+        h2 { color: #d0436d; margin-top: 0; text-align: center; }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ffd1dc; border-radius: 10px; box-sizing: border-box; font-size: 15px; outline: none; }
+        input:focus, textarea:focus { border-color: #e75480; box-shadow: 0 0 5px rgba(231,84,128,0.3); }
+        button { background: #e75480; color: white; border: none; padding: 14px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; width: 100%; transition: background 0.3s; }
+        button:hover { background: #d0436d; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Escrever Nova Carta para a Sarah ❤️</h2>
+        <input type="text" id="tituloCarta" placeholder="Título da carta (ex: Para o amor da minha vida)">
+        <textarea id="textoCarta" rows="6" placeholder="Escreva sua mensagem aqui..."></textarea>
+        <button id="btnEnviar">Salvar e Enviar Carta</button>
+    </div>
+
+    <!-- Firebase SDK Modular -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDAXpFJafiXGNyOwU_5B0CRGwa5hYbXAQ",
+            authDomain: "cantinho-sarah.firebaseapp.com",
+            projectId: "cantinho-sarah",
+            storageBucket: "cantinho-sarah.firebasestorage.app",
+            messagingSenderId: "705673397820",
+            appId: "1:705673397820:web:f754f7eb9974dacfe5a539"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.getElementById("btnEnviar").addEventListener("click", async () => {
+            const titulo = document.getElementById("tituloCarta").value.trim();
+            const texto = document.getElementById("textoCarta").value.trim();
+
+            if (!titulo || !texto) {
+                alert("Por favor, preencha o título e o texto da carta!");
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "cartas"), {
+                    titulo: titulo,
+                    texto: texto,
+                    data: new Date().toLocaleDateString('pt-BR')
+                });
+
+                alert("Carta enviada e salva com sucesso para a Sarah! ❤️");
+                document.getElementById("tituloCarta").value = "";
+                document.getElementById("textoCarta").value = "";
+            } catch (e) {
+                console.error("Erro ao salvar carta: ", e);
+                alert("Ocorreu um erro ao salvar a carta. Verifique as regras do Firebase.");
+            }
+        });
+    </script>
+</body>
+</html>

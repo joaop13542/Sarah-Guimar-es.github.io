@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para a Sarah ❤️</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #fdf2f4; color: #333; padding: 20px; max-width: 600px; margin: auto; }
+        h1 { text-align: center; color: #d0436d; font-size: 28px; margin-bottom: 25px; }
+        .carta-item { background: white; padding: 22px; border-radius: 16px; box-shadow: 0 4px 15px rgba(231,84,128,0.1); margin-bottom: 20px; border-left: 5px solid #e75480; }
+        .carta-item h3 { margin-top: 0; color: #e75480; font-size: 20px; }
+        .data { font-size: 0.85em; color: #999; margin-bottom: 12px; font-weight: 500; }
+        .loading { text-align: center; color: #888; font-style: italic; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+    <h1>Para a Sarah ❤️</h1>
+    <div id="lista-cartas">
+        <p class="loading">Carregando cartas com carinho... ✨</p>
+    </div>
+
+    <!-- Firebase SDK Modular -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDAXpFJafiXGNyOwU_5B0CRGwa5hYbXAQ",
+            authDomain: "cantinho-sarah.firebaseapp.com",
+            projectId: "cantinho-sarah",
+            storageBucket: "cantinho-sarah.firebasestorage.app",
+            messagingSenderId: "705673397820",
+            appId: "1:705673397820:web:f754f7eb9974dacfe5a539"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function carregarCartas() {
+            const container = document.getElementById("lista-cartas");
+            try {
+                const querySnapshot = await getDocs(collection(db, "cartas"));
+                container.innerHTML = "";
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = "<p style='text-align: center; color: #777;'>Nenhuma carta encontrada ainda. Volte logo! ❤️</p>";
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const carta = doc.data();
+                    const div = document.createElement("div");
+                    div.className = "carta-item";
+                    div.innerHTML = `
+                        <h3>${carta.titulo || 'Carta de Amor'}</h3>
+                        <div class="data">📅 ${carta.data || ''}</div>
+                        <p style="white-space: pre-wrap; line-height: 1.6;">${carta.texto || ''}</p>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (e) {
+                console.error("Erro ao buscar cartas: ", e);
+                container.innerHTML = "<p style='text-align: center; color: #d0436d;'>Erro ao carregar as cartas. Verifique as regras do Firebase.</p>";
+            }
+        }
+
+        carregarCartas();
+    </script>
+</body>
+</html>
