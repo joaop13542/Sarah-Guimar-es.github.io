@@ -56,6 +56,24 @@ button.ghost{background:transparent;color:var(--texto);border:1px solid var(--su
 .lista{text-align:left;margin:34px 0 0;padding-left:1.6em}
 .lista li{margin:0 0 .9em;padding-left:.3em}
 .lista li::marker{color:var(--rosa)}
+#cantinho{justify-content:flex-start;padding-top:72px}
+.abas{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:22px 0}
+.abas button{background:transparent;color:var(--texto);border:1px solid var(--suave);padding:10px 18px}
+.abas button.ativa{background:var(--rosa);color:#2a0f24;border-color:var(--rosa)}
+.painel{width:100%;max-width:420px;text-align:left}
+.painel[hidden]{display:none}
+.item{display:block;background:#ffffff10;border:1px solid #ffffff22;border-radius:16px;padding:16px 18px;margin:0 0 12px}
+label.item{display:flex;gap:12px;align-items:center}
+.item h3{margin:0 0 4px;font:600 1.3rem "Cormorant Garamond",Georgia,serif;color:var(--ouro)}
+.item p{max-width:none;white-space:pre-wrap}
+.painel input,.painel textarea{width:100%;font:inherit;padding:10px 12px;border-radius:12px;border:1px solid var(--suave);background:#0004;color:var(--texto);margin:0 0 8px}
+.painel button{margin:0 6px 8px 0}
+.item{position:relative}
+.painel .acoes{position:absolute;top:8px;right:10px;display:flex;gap:2px}
+.painel .acoes button{background:none;border:0;padding:6px;margin:0;font-size:1.05rem;line-height:1;cursor:pointer}
+body.editando .item h3{padding-right:76px}
+.edit{display:none;margin-top:18px;padding-top:16px;border-top:1px dashed var(--suave)}
+body.editando .edit{display:block}
 /* final */
 .botoes{display:flex;gap:16px;margin-top:30px;min-height:56px;align-items:center;justify-content:center;flex-wrap:wrap}
 .cora{position:fixed;bottom:-30px;z-index:5;pointer-events:none;animation:sobe linear forwards}
@@ -109,6 +127,40 @@ button.ghost{background:transparent;color:var(--texto);border:1px solid var(--su
       <ol class="lista" id="lista"></ol>
     </div>
   </section>
+
+  <section id="cantinho">
+    <h2>Nosso cantinho</h2>
+    <div class="abas">
+      <button class="ativa" data-p="pMusica">Música</button><button data-p="pCartas">Cartas</button><button data-p="pMarcos">Datas</button><button data-p="pPlanos">Planos</button><button data-p="pQuiz">Quiz</button>
+    </div>
+    <div class="painel" id="pMusica" style="text-align:center">
+      <p class="serif" style="font-size:1.7rem;margin:0 auto 6px;color:var(--rosa)">O Sol e a Lua</p>
+      <p class="suave" style="margin:0 auto 20px">Pequeno Cidadão · a nossa música</p>
+      <button id="tocar">▶ Tocar</button>
+      <div id="player" style="margin-top:18px"><div id="ytp"></div></div>
+      <div class="edit"><input id="mLink" placeholder="Link do YouTube da música"><button id="salvaMusica">Salvar link</button></div>
+    </div>
+    <div class="painel" id="pCartas" hidden>
+      <div id="listaCartas"></div>
+      <div class="edit">
+        <input id="cTitulo" placeholder="Título da carta"><input id="cData" type="date" title="Só abre a partir desta data (opcional)"><input id="cDica" placeholder="Dica da senha (ela vê)"><input id="cSenha" placeholder="Senha da carta"><textarea id="cTexto" rows="5" placeholder="Escreva a carta"></textarea>
+        <button id="addCarta">Trancar carta</button>
+      </div>
+    </div>
+    <div class="painel" id="pMarcos" hidden>
+      <div id="listaMarcos"></div>
+      <div class="edit"><input id="dNome" placeholder="Nome da data (ex.: aniversário da Sarah)"><input id="dData" type="date"><button id="addData">Adicionar data</button></div>
+    </div>
+    <div class="painel" id="pPlanos" hidden>
+      <div id="listaPlanos"></div>
+      <div class="edit"><input id="pTexto" placeholder="Novo plano"><button id="addPlano">Adicionar plano</button></div>
+    </div>
+    <div class="painel" id="pQuiz" hidden>
+      <div id="quizBox"></div>
+      <div class="edit"><div id="quizAdm"></div><input id="qP" placeholder="Pergunta"><textarea id="qO" rows="4" placeholder="Uma opção por linha"></textarea><input id="qC" type="number" min="1" placeholder="Número da opção certa (1, 2, 3...)"><button id="addQuiz">Adicionar pergunta</button></div>
+    </div>
+    <button id="mais" class="ghost" aria-label="Editar" style="margin-top:16px;width:52px;height:52px;padding:0;font-size:1.8rem;line-height:1">+</button>
+  </section>
 </main>
 
 <script>
@@ -135,10 +187,25 @@ const CFG = {
     "Eu poderia te mandar uma mensagem, mas você merece muito mais do que isso.",
     "Você me esperou por três anos. Três anos sempre ali, firme, sem desistir de mim. Eu sei que várias vezes eu vacilei, e mesmo assim você me aceitou, me deu uma chance e acreditou em nós. Eu nunca vou esquecer disso.",
     "Obrigado por cada paciência, cada presente, cada risada e cada vez que você me escolheu. Hoje eu tenho o privilégio de chamar você de namorada, e eu quero merecer isso todos os dias.",
-    "Agora a gente tem um anel de sol e lua, então ficou combinado: você é o meu sol, que ilumina e aquece tudo por onde passa, e eu sou a sua lua, que fica por perto até nas noites mais escuras.",
-    "Todo sol precisa de uma lua pra completar o dia, e toda lua só brilha porque tem um sol. Eu brilho melhor do seu lado. Com você, até a noite amanhece.",
+    "Agora a gente tem um anel de sol e lua, e eu fiz questão de combinar com você o que isso significa: você é o meu sol, e eu sou a sua lua.",
+    "Você é o meu sol porque chega e ilumina tudo. Com a sua risada, o seu jeito feliz e a sua energia, qualquer lugar fica mais quente e mais vivo. Onde você está, é dia.",
+    "Eu quero ser a sua lua: aquela que fica por perto quando o dia acaba, que cuida de você nas noites mais difíceis e que nunca some do seu céu, nem quando você não está olhando.",
+    "O sol e a lua parecem opostos, mas vivem se procurando no mesmo céu. Todo sol precisa de uma lua pra completar o dia, e toda lua só brilha porque tem um sol. É assim que eu me sinto com você: eu brilho melhor do seu lado.",
+    "Dizem que sol e lua quase nunca se encontram, mas a gente faz o contrário: a gente se encontra todo dia, e cada encontro vira um eclipse, aquele momento raro em que o mundo para pra ver os dois juntos.",
+    "Que a gente seja assim pra sempre: você aquecendo os meus dias, eu cuidando das suas noites, e os dois juntos no mesmo céu. Com você, até a noite amanhece.",
     "Se eu pudesse pedir um desejo, era só mais tempo com você. Muito tempo. Uma vida inteira de dias e de noites ao seu lado."
   ],
+  musicaArquivo: "",                    // (opcional) nome de um áudio enviado ao GitHub, ex.: "musica.mp3"
+  musicaLink: "",                       // cole aqui o link do YouTube de "O Sol e a Lua"
+  cartas: [],
+  datas: [],                             // exemplo: {nome: "Aniversário da Sarah", data: "2027-03-15"}
+  planos: ["Viajar juntos", "Ver o pôr do sol juntos", "Fazer um jantar a dois"],
+  quiz: [
+    {p: "Em que dia a gente começou a namorar?", o: ["26 de outubro", "1º de novembro", "15 de outubro"], c: 0},
+    {p: "Quem é o sol e quem é a lua?", o: ["Ela é o sol, eu sou a lua", "Ela é a lua, eu sou o sol"], c: 0},
+    {p: "Quanto tempo ela me esperou?", o: ["6 meses", "1 ano", "3 anos"], c: 2}
+  ],
+  quizFim: "Não importa a nota, eu te amo do mesmo jeito.",
   assinatura: "Com todo o meu amor, João Paulo",
   pergunta: "Quer continuar sendo o meu sol, pra eu ser a sua lua?",
   sim: "Sim",
@@ -188,8 +255,9 @@ $("cartao").addEventListener("keydown", e => { if (e.key === "Enter") prox(); })
 /* final: o "não" foge */
 const nao = $("nao");
 function foge(){
-  nao.style.position = "fixed";
-  const w = innerWidth - nao.offsetWidth - 24, h = innerHeight - nao.offsetHeight - 24;
+  const sec = nao.closest("section");
+  nao.style.position = "absolute";
+  const w = Math.max(0, sec.clientWidth - nao.offsetWidth - 24), h = Math.max(0, sec.clientHeight - nao.offsetHeight - 24);
   nao.style.left = (12 + Math.random()*w) + "px"; nao.style.top = (12 + Math.random()*h) + "px";
 }
 nao.addEventListener("pointerenter", foge);
@@ -230,6 +298,171 @@ $("abreFeliz").addEventListener("click", () => {
   $("feliz").scrollIntoView({behavior:"smooth", block:"center"});
 });
 $("outro").addEventListener("click", sorteia);
+
+/* cantinho */
+const esc = t => String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+const dias = d => Math.ceil((d - Date.now())/86400000);
+const ler = (k,d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch(e){ return d; } };
+const gravar = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} };
+let modoEd = false;
+const EDIT = () => modoEd || location.hash === "#editar";
+let D = { cartas: CFG.cartas, datas: CFG.datas, planos: CFG.planos, quiz: CFG.quiz, musicaLink: CFG.musicaLink };
+
+/* senha das cartas (criptografia no próprio navegador) */
+const enc = new TextEncoder(), b64 = u => btoa(String.fromCharCode(...new Uint8Array(u))), unb = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function chave(senha, salt){
+  const k = await crypto.subtle.importKey("raw", enc.encode(senha), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2", salt, iterations:100000, hash:"SHA-256"}, k, {name:"AES-GCM", length:256}, false, ["encrypt","decrypt"]);
+}
+async function cifra(txt, senha){
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({name:"AES-GCM", iv}, await chave(senha, salt), enc.encode(txt));
+  return { salt: b64(salt), iv: b64(iv), ct: b64(ct) };
+}
+async function decifra(c, senha){
+  const pt = await crypto.subtle.decrypt({name:"AES-GCM", iv: unb(c.iv)}, await chave(senha, unb(c.salt)), unb(c.ct));
+  return new TextDecoder().decode(pt);
+}
+
+/* salvar no GitHub (arquivo dados.json) */
+async function salvar(){
+  let tk = ler("tk", "");
+  if (!tk) { tk = (prompt("Cole aqui o seu token do GitHub:") || "").trim(); if (!tk) return false; gravar("tk", tk); }
+  const o = location.hostname.split(".")[0], r = location.pathname.split("/")[1] || location.hostname;
+  const url = "https://api.github.com/repos/" + o + "/" + r + "/contents/dados.json", h = { Authorization: "Bearer " + tk, Accept: "application/vnd.github+json" };
+  try {
+    let sha; const g = await fetch(url, { headers: h }); if (g.ok) sha = (await g.json()).sha;
+    const body = { message: "Atualiza o site", content: btoa(unescape(encodeURIComponent(JSON.stringify(D, null, 1)))), sha };
+    const p = await fetch(url, { method: "PUT", headers: h, body: JSON.stringify(body) });
+    if (!p.ok) throw 0;
+    alert("Salvo! Pode levar 1 ou 2 minutos para aparecer pra ela."); return true;
+  } catch(e){ alert("Não consegui salvar. Confira o token e tente de novo."); try { localStorage.removeItem("tk"); } catch(x){} return false; }
+}
+async function grava(){ if (await salvar()) desenhaTudo(); }
+
+document.querySelectorAll(".abas button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".abas button").forEach(x => x.classList.toggle("ativa", x === b));
+  document.querySelectorAll(".painel").forEach(p => p.hidden = p.id !== b.dataset.p);
+}));
+
+/* música */
+let yt, au;
+$("tocar").addEventListener("click", () => {
+  const m = (D.musicaLink || "").match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/);
+  if (CFG.musicaArquivo) { if (!au) au = new Audio(CFG.musicaArquivo); if (au.paused) { au.play(); $("tocar").textContent = "⏸ Pausar"; } else { au.pause(); $("tocar").textContent = "▶ Tocar"; } return; }
+  if (!m) return void window.open("https://www.youtube.com/results?search_query=Pequeno+Cidad%C3%A3o+O+Sol+e+a+Lua", "_blank");
+  if (yt) { yt.getPlayerState() === 1 ? yt.pauseVideo() : yt.playVideo(); return; }
+  window.onYouTubeIframeAPIReady = () => { yt = new YT.Player("ytp", { videoId: m[1], width: "100%", height: "220", playerVars: { autoplay: 1, playsinline: 1, rel: 0 }, events: { onStateChange: e => { $("tocar").textContent = e.data === 1 ? "⏸ Pausar" : "▶ Tocar"; } } }); };
+  const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s);
+});
+$("salvaMusica").addEventListener("click", () => { D.musicaLink = $("mLink").value.trim(); grava(); });
+
+/* cartas */
+let editI = -1;
+function desenhaCartas(){
+  $("listaCartas").innerHTML = D.cartas.map((c,i) => {
+    const d = c.abre ? new Date(c.abre + "T00:00:00") : null, n = d ? dias(d) : 0;
+    const corpo = n > 0 ? '<p class="suave">Abre em ' + d.toLocaleDateString("pt-BR") + ' (faltam ' + n + ' dias)</p>'
+      : '<p class="suave">' + (c.dica ? "Dica da senha: " + esc(c.dica) : "Digite a senha pra abrir.") + '</p><input type="password" placeholder="Senha" id="s' + i + '"><button data-abrir="' + i + '">Abrir carta</button><p id="t' + i + '" style="margin-top:10px"></p>';
+    const adm = EDIT() ? '<div class="acoes"><button data-edita="' + i + '" title="Editar" aria-label="Editar carta">✏️</button><button data-apaga="' + i + '" title="Apagar" aria-label="Apagar carta">🗑️</button></div>' : "";
+    return '<div class="item">' + adm + '<h3>' + (n > 0 ? "🔒 " : "💌 ") + esc(c.titulo) + '</h3>' + corpo + '</div>';
+  }).join("");
+}
+$("listaCartas").addEventListener("click", async e => {
+  const b = e.target.dataset;
+  if (b.abrir !== undefined) { const i = +b.abrir; try { $("t" + i).textContent = await decifra(D.cartas[i], $("s" + i).value); } catch(x){ $("t" + i).textContent = "Senha incorreta. Tente de novo."; } }
+  if (b.apaga !== undefined) {
+    const i = +b.apaga, s = prompt("Senha desta carta, para apagar:"); if (s === null) return;
+    try { await decifra(D.cartas[i], s); } catch(x){ return alert("Senha incorreta."); }
+    if (confirm("Apagar esta carta para sempre?")) { D.cartas.splice(i, 1); grava(); }
+  }
+  if (b.edita !== undefined) {
+    const i = +b.edita, s = prompt("Senha desta carta:"); if (s === null) return;
+    try { const c = D.cartas[i]; $("cTexto").value = await decifra(c, s); $("cTitulo").value = c.titulo; $("cData").value = c.abre || ""; $("cDica").value = c.dica || ""; $("cSenha").value = s; editI = i; $("addCarta").textContent = "Salvar alterações"; $("cTitulo").scrollIntoView({behavior:"smooth", block:"center"}); }
+    catch(x){ alert("Senha incorreta."); }
+  }
+});
+$("addCarta").addEventListener("click", async () => {
+  const t = $("cTitulo").value.trim(), x = $("cTexto").value.trim(), s = $("cSenha").value;
+  if (!t || !x || !s) return alert("Preencha o título, a senha e a carta.");
+  const c = Object.assign({ titulo: t, abre: $("cData").value, dica: $("cDica").value.trim() }, await cifra(x, s));
+  if (editI >= 0) D.cartas[editI] = c; else D.cartas.push(c);
+  if (await salvar()) { editI = -1; $("addCarta").textContent = "Trancar carta"; ["cTitulo","cData","cDica","cSenha","cTexto"].forEach(i => $(i).value = ""); desenhaTudo(); }
+});
+
+/* datas */
+let editD = -1;
+function marcos(){
+  const i0 = new Date(CFG.inicio), n = new Date(); let k = 0, y = 0;
+  for (;;) { const d = new Date(i0); d.setMonth(i0.getMonth() + k + 1); if (d > n) break; k++; }
+  for (;;) { const a = new Date(i0); a.setFullYear(i0.getFullYear() + y + 1); if (a > n) break; y++; }
+  const L = [];
+  for (let j = 1; j <= k + 1; j++) if (j % 12) { const d = new Date(i0); d.setMonth(i0.getMonth() + j); L.push({ nome: j + (j === 1 ? " mês" : " meses") + " de namoro", d }); }
+  for (let j = 1; j <= y + 1; j++) { const a = new Date(i0); a.setFullYear(i0.getFullYear() + j); L.push({ nome: j + (j === 1 ? " ano" : " anos") + " de namoro", d: a }); }
+  D.datas.forEach((x,i) => L.push({ nome: x.nome, d: new Date(x.data + "T00:00:00"), i }));
+  const fut = L.filter(x => x.d > n).sort((p,q) => p.d - q.d), pas = L.filter(x => x.d <= n).sort((p,q) => q.d - p.d);
+  const linha = x => {
+    const f = x.d > n, q = f ? dias(x.d) : Math.floor((n - x.d) / 86400000), u = q === 1 ? " dia" : " dias";
+    const adm = EDIT() && x.i !== undefined ? '<div class="acoes"><button data-edit="' + x.i + '" title="Editar" aria-label="Editar data">✏️</button><button data-del="' + x.i + '" title="Apagar" aria-label="Apagar data">🗑️</button></div>' : "";
+    return '<div class="item">' + adm + '<h3>' + esc(x.nome) + '</h3><p class="suave">' + x.d.toLocaleDateString("pt-BR") + ' · ' + (f ? "faltam " + q + u : "já passou há " + q + u) + '</p></div>';
+  };
+  $("listaMarcos").innerHTML = fut.concat(pas).map(linha).join("");
+}
+$("listaMarcos").addEventListener("click", e => {
+  const b = e.target.dataset;
+  if (b.del !== undefined && confirm("Apagar esta data?")) { D.datas.splice(+b.del, 1); grava(); }
+  if (b.edit !== undefined) { const x = D.datas[+b.edit]; $("dNome").value = x.nome; $("dData").value = x.data; editD = +b.edit; $("addData").textContent = "Salvar alterações"; $("dNome").scrollIntoView({behavior:"smooth", block:"center"}); }
+});
+$("addData").addEventListener("click", () => {
+  const nome = $("dNome").value.trim(), data = $("dData").value;
+  if (!nome || !data) return alert("Preencha o nome e a data.");
+  if (editD >= 0) D.datas[editD] = { nome, data }; else D.datas.push({ nome, data });
+  editD = -1; $("addData").textContent = "Adicionar data"; $("dNome").value = ""; $("dData").value = ""; grava();
+});
+
+/* planos */
+let feitos = ler("feitos", {});
+function desenhaPlanos(){
+  $("listaPlanos").innerHTML = D.planos.map((t,i) => '<label class="item">' + (EDIT() ? '<div class="acoes"><button data-del="' + i + '" title="Apagar" aria-label="Apagar plano">🗑️</button></div>' : "") + '<input type="checkbox" data-t="' + esc(t) + '"' + (feitos[t] ? " checked" : "") + ' style="width:auto;margin:0"><span style="flex:1">' + esc(t) + '</span></label>').join("");
+}
+$("listaPlanos").addEventListener("click", e => {
+  const i = e.target.dataset.del;
+  if (i !== undefined) { e.preventDefault(); if (confirm("Apagar este plano?")) { D.planos.splice(+i, 1); grava(); } }
+});
+$("listaPlanos").addEventListener("change", e => { const c = e.target; if (c.dataset.t !== undefined) { feitos[c.dataset.t] = c.checked; gravar("feitos", feitos); } });
+$("addPlano").addEventListener("click", () => { const t = $("pTexto").value.trim(); if (!t) return; D.planos.push(t); $("pTexto").value = ""; grava(); });
+
+/* quiz */
+let qi = 0, pts = 0;
+function pergunta(){
+  const q = D.quiz[qi], box = $("quizBox");
+  if (!q) { box.innerHTML = D.quiz.length ? '<div class="item"><h3>Você acertou ' + pts + ' de ' + D.quiz.length + '</h3><p>' + esc(CFG.quizFim) + '</p></div><button id="refaz">Jogar de novo</button>' : '<p class="suave">Ainda não tem perguntas.</p>'; if ($("refaz")) $("refaz").onclick = () => { qi = 0; pts = 0; pergunta(); }; return; }
+  box.innerHTML = '<div class="item"><h3>' + esc(q.p) + '</h3></div>' + q.o.map((o,i) => '<button class="ghost opc" data-i="' + i + '" style="display:block;width:100%;margin:0 0 8px;text-align:left;border-radius:16px">' + esc(o) + '</button>').join("");
+  box.querySelectorAll(".opc").forEach(b => b.addEventListener("click", () => {
+    const ok = +b.dataset.i === q.c; if (ok) pts++;
+    box.querySelectorAll(".opc").forEach(x => { x.disabled = true; if (+x.dataset.i === q.c) x.style.background = "#f4a6b855"; });
+    b.insertAdjacentHTML("afterend", '<p class="suave" style="margin:0 0 12px">' + (ok ? "Acertou! ♥" : "Quase! A resposta certa está destacada.") + '</p>');
+    setTimeout(() => { qi++; pergunta(); }, 1600);
+  }));
+}
+$("quizAdm").addEventListener("click", e => { const i = e.target.dataset.del; if (i !== undefined && confirm("Apagar esta pergunta?")) { D.quiz.splice(+i, 1); grava(); } });
+$("addQuiz").addEventListener("click", () => {
+  const p = $("qP").value.trim(), o = $("qO").value.split("\n").map(s => s.trim()).filter(Boolean), c = +$("qC").value - 1;
+  if (!p || o.length < 2 || !(c >= 0 && c < o.length)) return alert("Escreva a pergunta, pelo menos 2 opções (uma por linha) e o número da opção certa.");
+  D.quiz.push({ p, o, c }); ["qP","qO","qC"].forEach(i => $(i).value = ""); grava();
+});
+
+$("mais").addEventListener("click", () => { modoEd = !modoEd; desenhaTudo(); });
+function desenhaTudo(){
+  document.body.classList.toggle("editando", EDIT());
+  $("mais").textContent = EDIT() ? "✕" : "+";
+  desenhaCartas(); marcos(); desenhaPlanos(); qi = 0; pts = 0; pergunta();
+  $("mLink").value = D.musicaLink || "";
+  $("quizAdm").innerHTML = D.quiz.map((q,i) => '<div class="item"><p>' + esc(q.p) + '</p><button class="ghost" data-del="' + i + '">Apagar</button></div>').join("");
+}
+addEventListener("hashchange", desenhaTudo);
+desenhaTudo();
+fetch("dados.json?" + Date.now()).then(r => r.ok ? r.json() : null).then(j => { if (j) { D = Object.assign(D, j); desenhaTudo(); } }).catch(() => {});
 
 /* céu estrelado */
 const cv = $("ceu"), cx = cv.getContext("2d"); let est = [];
